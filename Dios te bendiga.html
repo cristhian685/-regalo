@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Feliz Cumpleaños! ✨🌹</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose-red: #e0115f;
+            --rose-deep: #800020;
+            --gold: #ffd700;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #020205;
+            font-family: 'Outfit', sans-serif;
+            color: white;
+            touch-action: none;
+        }
+
+        #nebula {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #150005 0%, #000 100%);
+            z-index: 0;
+        }
+
+        .ambient-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 120vw;
+            height: 120vh;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(224, 17, 95, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #countdown-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 500;
+            pointer-events: none;
+        }
+
+        #countdown {
+            font-size: clamp(150px, 60vw, 500px);
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff 10%, var(--gold) 40%, var(--rose-red) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 40px rgba(224, 17, 95, 0.9));
+            opacity: 0;
+            display: none;
+            line-height: 0.8;
+        }
+
+        .count-animate {
+            display: block !important;
+            animation: ultraCount 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes ultraCount {
+            0% {
+                transform: scale(0.2) rotate(-20deg);
+                opacity: 0;
+                filter: blur(20px) brightness(2);
+            }
+
+            40% {
+                transform: scale(1.2) rotate(10deg);
+                opacity: 1;
+                filter: blur(0) brightness(1.2);
+            }
+
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 0;
+                filter: blur(40px) brightness(0);
+            }
+        }
+
+        .cinematic-reveal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            text-align: center;
+            pointer-events: none;
+            z-index: 400;
+            width: 90%;
+            max-width: 800px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+            padding: 40px;
+            border-radius: 40px;
+            background: radial-gradient(circle at center, rgba(15, 0, 5, 0.9) 0%, transparent 100%);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+        }
+
+        .cinematic-reveal.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        h1.main-title {
+            font-weight: 900;
+            font-size: clamp(2rem, 9vw, 5.5rem);
+            line-height: 1.1;
+            margin: 0;
+            background: linear-gradient(180deg, #fff 0%, var(--gold) 35%, var(--rose-red) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 25px rgba(224, 17, 95, 0.5));
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: floating 5s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .inspiring-message {
+            position: relative;
+            min-height: 120px;
+            margin-top: 35px;
+            opacity: 0;
+            transition: opacity 2s ease 1s;
+        }
+
+        .inspiring-message.reveal {
+            opacity: 1;
+        }
+
+        .quote {
+            font-size: clamp(1.1rem, 4.5vw, 2rem);
+            color: #fff;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            transition: all 1.2s ease;
+            font-style: italic;
+            line-height: 1.4;
+            width: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            display: none;
+        }
+
+        .quote.active {
+            display: block;
+            opacity: 1;
+            position: relative;
+        }
+
+        .blessing {
+            font-size: clamp(1.3rem, 5.5vw, 2.8rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, #fff, var(--gold), #fff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 35px var(--rose-red));
+            opacity: 0;
+            transition: all 1.5s 2.5s;
+            margin-top: 35px;
+            letter-spacing: 4px;
+        }
+
+        .visible .blessing {
+            opacity: 1;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        #final-card {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000000;
+            background: rgba(0, 0, 0, 0.9);
+            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        #final-card.show {
+            display: flex !important;
+            animation: fadeInFinale 1s ease forwards;
+        }
+
+        @keyframes fadeInFinale {
+            from {
+                opacity: 0;
+                transform: scale(1.1);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .final-image-container {
+            width: 90%;
+            max-width: 380px;
+            aspect-ratio: 4/5;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(224, 17, 95, 0.6), 0 0 20px var(--gold);
+            border: 4px solid var(--gold);
+            background: #111;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #final-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .img-fallback {
+            padding: 40px 20px;
+            color: var(--gold);
+            text-align: center;
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .final-text {
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(224, 17, 95, 0.8), 0 0 5px #fff;
+            margin-top: 10px;
+            font-size: 1.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="nebula"></div>
+    <div class="ambient-glow" id="glow"></div>
+    <div id="countdown-container">
+        <div id="countdown"></div>
+    </div>
+    <canvas id="fireworksCanvas"></canvas>
+    <div id="reveal-container" class="cinematic-reveal">
+        <h1 class="main-title" id="title-main">FELIZ CUMPLEAÑOS</h1>
+        <div class="inspiring-message" id="message-carousel">
+            <div class="quote active">"Hay personas que no cumplen años, sino que iluminan los días de quienes tenemos
+                la suerte de conocerlas. Como tú."</div>
+            <div class="quote">"Que la vida te devuelva siempre toda la luz y la alegría que regalas con solo estar
+                presente."</div>
+            <div class="quote">"Brillas con una luz propia que hace que todo a tu alrededor sea un poco más mágico.
+                Nunca dejes de hacerlo."</div>
+            <div class="quote">"En el gran final de este show, recuerda que la explosión de colores más hermosa es la
+                que emite tu propia esencia."</div>
+            <div class="quote">"Hoy el universo celebra tu existencia, porque personas tan especiales como tú son las
+                que le dan color a nuestro mundo."</div>
+        </div>
+        <div class="blessing">ERES UN SER DE LUZ MARAVILLOSO ✨</div>
+    </div>
+
+    <div id="final-card">
+        <div class="final-image-container">
+            <img src="tuyyo.jpeg" id="final-img" alt="Cumpleaños">
+        </div>
+        <div class="final-text">FELIZ CUMPLEAÑOS ✨</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById("fireworksCanvas");
+        const ctx = canvas.getContext("2d", { alpha: false });
+        let width, height, audioCtx, isAudioOn = false, explosionCount = 0;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            ctx.scale(dpr, dpr);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        window.addEventListener('load', () => {
+            startCountdown();
+            window.addEventListener('click', () => {
+                if (!audioCtx) {
+                    try {
+                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        isAudioOn = true;
+                    } catch (e) { }
+                }
+            }, { once: true });
+        });
+
+        const rockets = [], particles = [], petals = [];
+        const CONFIG = { gravity: 0.22, friction: 0.97, shake: 0, trail: 0.15, active: false };
+
+        function startCountdown() {
+            const cd = document.getElementById('countdown');
+            let count = 5;
+            const timer = setInterval(() => {
+                if (count > 0) {
+                    cd.textContent = count;
+                    cd.classList.remove('count-animate');
+                    void cd.offsetWidth;
+                    cd.classList.add('count-animate');
+                    count--;
+                } else {
+                    clearInterval(timer);
+                    cd.style.display = 'none';
+                    triggerShow();
+                }
+            }, 1000);
+        }
+
+        function triggerShow() {
+            CONFIG.active = true;
+            const reveal = document.getElementById('reveal-container');
+            reveal.classList.add('visible');
+            setTimeout(() => document.getElementById('message-carousel').classList.add('reveal'), 1500);
+            startCarousel();
+            createRosePetals();
+            startOneByOne(); // Pirotecnia uno por uno desde el principio
+
+            // 1. EL GRAN PUM INICIAL
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const r = new Rocket(true);
+                    r.x = width * 0.1 + Math.random() * (width * 0.8);
+                    r.y = height * 0.2 + Math.random() * (height * 0.4);
+                    r.explode();
+                }, i * 40);
+            }
+        }
+
+        function startOneByOne() {
+            if (window.oneByOneInterval) return;
+            window.oneByOneInterval = setInterval(() => {
+                if (rockets.length === 0) {
+                    rockets.push(new Rocket(Math.random() < 0.3));
+                }
+            }, 2500);
+        }
+
+        function startCarousel() {
+            const title = document.getElementById('title-main');
+            const quotes = document.querySelectorAll('.quote');
+            let current = 0;
+            let cycleFinished = false;
+
+            setTimeout(() => {
+                title.style.opacity = '0';
+                setTimeout(() => {
+                    title.textContent = "DIOS TE BENDIGA SIEMPRE";
+                    title.style.opacity = '1';
+
+                    const interval = setInterval(() => {
+                        // Ráfaga rápida antes de cambiar
+                        triggerMachineGun();
+
+                        setTimeout(() => {
+                            quotes[current].classList.remove('active');
+                            current++;
+
+                            if (current < quotes.length) {
+                                quotes[current].classList.add('active');
+                            } else if (!cycleFinished) {
+                                // FINAL DE LAS FRASES: GRAN CIERRE
+                                cycleFinished = true;
+                                clearInterval(interval); // Detenemos el carrusel
+                                triggerGrandFinale();
+                            }
+                        }, 500); // Cambio ultra-rápido tras la ráfaga
+                    }, 3000); // Frases súper rápidas (3 segundos)
+                }, 1000);
+            }, 12000);
+        }
+
+        function triggerGrandFinale() {
+            document.getElementById('reveal-container').style.opacity = '0';
+
+            setTimeout(() => {
+                document.getElementById('reveal-container').style.display = 'none';
+                const finalCard = document.getElementById('final-card');
+                finalCard.classList.add('show');
+
+                let celebrationShots = 0;
+                const celebrationInterval = setInterval(() => {
+                    const r = new Rocket(true);
+                    r.x = width * (0.1 + Math.random() * 0.8);
+                    r.y = height * (0.2 + Math.random() * 0.4);
+                    r.explode(1.5);
+
+                    celebrationShots++;
+                    if (celebrationShots > 25) {
+                        clearInterval(celebrationInterval);
+                        setTimeout(triggerMegaBomb, 1000);
+                    }
+                }, 150);
+            }, 1000);
+        }
+
+        function triggerMachineGun() {
+            // Secuencia rápida entre frases
+            const shots = isMobile ? 6 : 10;
+            for (let i = 0; i < shots; i++) {
+                setTimeout(() => {
+                    const r = new Rocket(false);
+                    r.x = width * (0.1 + Math.random() * 0.8);
+                    r.y = height * (0.2 + Math.random() * 0.3);
+                    r.explode(0.6);
+                }, i * 180);
+            }
+        }
+
+        function triggerMegaBomb() {
+            // Multiple deep explosions without screen shake
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const r = new Rocket(true);
+                    r.x = width * (0.2 + Math.random() * 0.6);
+                    r.y = height * 0.3 + Math.random() * (height * 0.2);
+                    r.explode(4); // Even more power for audio
+                }, i * 400);
+            }
+
+            // Final gold shockwave (Visual only)
+            setTimeout(() => {
+                flashBackgroundMega();
+            }, 2000);
+        }
+
+        function flashBackgroundMega() {
+            const glow = document.getElementById('glow');
+            glow.style.background = 'radial-gradient(circle, rgba(255, 215, 0, 0.4) 0%, transparent 80%)';
+            glow.style.opacity = '1';
+            setTimeout(() => {
+                glow.style.opacity = '0';
+                glow.style.background = 'radial-gradient(circle, rgba(224, 17, 95, 0.15) 0%, transparent 70%)';
+            }, 1000);
+        }
+
+        class Petal {
+            constructor() { this.reset(); this.y = Math.random() * height; }
+            reset() {
+                this.x = Math.random() * width; this.y = -30;
+                this.sz = Math.random() * 12 + 8;
+                this.spY = Math.random() * 1.2 + 0.6;
+                this.rot = Math.random() * 360;
+                this.rotS = (Math.random() - 0.5) * 2;
+                this.swing = Math.random() * 2 + 1;
+            }
+            update() {
+                this.y += this.spY; this.x += Math.sin(this.y / 60) * this.swing; this.rot += this.rotS;
+                if (this.y > height + 30) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rot * Math.PI / 180);
+                ctx.fillStyle = '#e0115f';
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(this.sz, -this.sz, this.sz * 2, this.sz, 0, this.sz);
+                ctx.bezierCurveTo(-this.sz * 2, this.sz, -this.sz, -this.sz, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createRosePetals() {
+            const count = isMobile ? 25 : 50;
+            for (let i = 0; i < count; i++) petals.push(new Petal());
+        }
+
+        class Particle {
+            constructor(x, y, hue, vx, vy) {
+                this.x = x; this.y = y; this.vx = vx; this.vy = vy;
+                this.hue = hue; this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.01;
+            }
+            update() {
+                this.vx *= CONFIG.friction; this.vy *= CONFIG.friction;
+                this.vy += CONFIG.gravity;
+                this.x += this.vx; this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                if (this.alpha <= 0) return;
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 75%, 1)`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, (isMobile ? 1.5 : 2), 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        class Rocket {
+            constructor(isSuper = false) {
+                this.isSuper = isSuper;
+                this.x = Math.random() * width; this.y = height;
+                this.targetY = Math.random() * (height * 0.5) + 50;
+                this.vy = -(Math.random() * 8 + 12);
+                this.vx = (Math.random() - 0.5) * 3;
+                this.hue = [345, 20, 0, 310, 50][Math.floor(Math.random() * 5)];
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy; this.vy += 0.2;
+                if (this.y <= this.targetY || this.vy >= 0) { this.explode(); return false; }
+                return true;
+            }
+            draw() {
+                ctx.fillStyle = "#fff";
+                ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI * 2); ctx.fill();
+            }
+            explode(bombMult = 1) {
+                explosionCount++;
+                const count = (this.isSuper ? (isMobile ? 120 : 250) : (isMobile ? 60 : 120)) * bombMult;
+                const power = (this.isSuper ? 12 : 6) * (bombMult > 1 ? 1.5 : 1);
+                for (let i = 0; i < count; i++) {
+                    const a = Math.random() * Math.PI * 2,
+                        s = Math.random() * power;
+                    particles.push(new Particle(this.x, this.y, this.hue, Math.cos(a) * s, Math.sin(a) * s));
+                }
+                playExplosion((this.isSuper ? 2.5 : 1.5) * bombMult);
+                CONFIG.shake = 0; // Removiendo vibración
+
+                if (explosionCount === 5) {
+                    for (let i = 0; i < 15; i++) {
+                        setTimeout(() => {
+                            const r = new Rocket(Math.random() < 0.3);
+                            r.x = Math.random() * width;
+                            r.y = height * 0.4;
+                            r.explode();
+                        }, i * 100);
+                    }
+                }
+            }
+        }
+
+        function playExplosion(vol) {
+            if (!isAudioOn || !audioCtx) return;
+            try {
+                const t = audioCtx.currentTime;
+                const isBomb = vol > 2;
+                const isRapid = vol < 0.8;
+
+                // LAYER 1: THE INITIAL IMPACT (THUMP)
+                const thump = audioCtx.createOscillator();
+                const thumpG = audioCtx.createGain();
+                thump.type = 'sine';
+                thump.frequency.setValueAtTime(isBomb ? 40 : (isRapid ? 80 : 60), t);
+                thump.frequency.exponentialRampToValueAtTime(1, t + (isBomb ? 0.8 : (isRapid ? 0.2 : 0.4)));
+                thumpG.gain.setValueAtTime(vol * 1.5, t);
+                thumpG.gain.exponentialRampToValueAtTime(0.001, t + (isBomb ? 0.8 : (isRapid ? 0.2 : 0.4)));
+                thump.connect(thumpG);
+                thumpG.connect(audioCtx.destination);
+                thump.start(t);
+                thump.stop(t + (isBomb ? 0.8 : (isRapid ? 0.2 : 0.4)));
+
+                // LAYER 2: THE CRACKLE (PYRO NOISE)
+                const bufferSize = audioCtx.sampleRate * (isBomb ? 1.0 : (isRapid ? 0.2 : 0.5));
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * (isBomb ? 0.15 : (isRapid ? 0.04 : 0.08))));
+                }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const noiseF = audioCtx.createBiquadFilter();
+                noiseF.type = 'lowpass';
+                noiseF.frequency.setValueAtTime(isRapid ? 3000 : 2000, t);
+                const noiseG = audioCtx.createGain();
+                noiseG.gain.setValueAtTime(vol * 0.8, t);
+                noiseG.gain.exponentialRampToValueAtTime(0.01, t + (isBomb ? 1.0 : (isRapid ? 0.2 : 0.5)));
+                noise.connect(noiseF);
+                noiseF.connect(noiseG);
+                noiseG.connect(audioCtx.destination);
+                noise.start(t);
+            } catch (e) { }
+        }
+
+        function loop() {
+            ctx.globalAlpha = 1;
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.fillStyle = `rgba(2, 2, 5, ${CONFIG.trail})`;
+            ctx.fillRect(0, 0, width, height);
+            ctx.save();
+            if (CONFIG.shake > 0) {
+                ctx.translate((Math.random() - 0.5) * CONFIG.shake, (Math.random() - 0.5) * CONFIG.shake);
+                CONFIG.shake *= 0.8;
+            }
+            petals.forEach(p => { p.update(); p.draw(); });
+            ctx.globalCompositeOperation = 'lighter';
+            let i = rockets.length; while (i--) { rockets[i].draw(); if (!rockets[i].update()) rockets.splice(i, 1); }
+            let j = particles.length; while (j--) {
+                particles[j].update(); particles[j].draw();
+                if (particles[j].alpha <= 0) particles.splice(j, 1);
+            }
+            ctx.restore();
+            requestAnimationFrame(loop);
+        }
+        loop();
+    </script>
+</body>
+
+</html>
